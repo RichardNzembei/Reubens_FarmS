@@ -5,4 +5,7 @@
  <div>
   <ProjectAdd/>
  </div>
+ <div>
+    <AppPinned/>
+ </div>
 </template>
