@@ -17,6 +17,12 @@
                             placeholder="Enter project name" required />
                     </div>
                     <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2">Description</label>
+                        <textarea v-model="project.description"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                            rows="4" placeholder="Enter project description" required></textarea>
+                    </div>
+                    <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Estimated Duration (Months)</label>
                         <input v-model="project.duration" type="number"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
@@ -34,12 +40,6 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                             placeholder="Enter land size" required />
                     </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 font-semibold mb-2">Requirements</label>
-                        <textarea v-model="project.requirements"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                            rows="4" placeholder="Enter project requirements"></textarea>
-                    </div>
                     <button type="submit"
                         class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all">
                         Save Project
@@ -49,24 +49,31 @@
         </div>
     </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const project = ref({
     name: '',
+    description: '',
     duration: '',
     startDate: '',
     landSize: '',
-    requirements: '',
+    sprayingTable: [],
+    fertilizerTable: [],
 });
 
 const submitProject = () => {
-    console.log('Project Data:', project.value);
-    alert('Project saved successfully!');
+    const savedProject = {
+        ...project.value,
+        id: Date.now(),
+    };
+    console.log('Saved Project:', savedProject);
+    router.push({ path: `/projects/${savedProject.id}` });
 };
 </script>
-
 <style>
 @keyframes fade-in {
     from {
