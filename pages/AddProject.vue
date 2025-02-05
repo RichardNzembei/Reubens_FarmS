@@ -61,8 +61,6 @@ const project = ref({
     duration: '',
     startDate: '',
     landSize: '',
-    sprayingTable: [],
-    fertilizerTable: [],
 });
 
 const submitProject = () => {

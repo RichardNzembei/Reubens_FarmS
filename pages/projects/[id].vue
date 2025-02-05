@@ -30,13 +30,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(record, index) in project.sprayingTable" :key="index" class="border-b">
-                                <td class="p-3">{{ record.date }}</td>
-                                <td class="p-3">{{ record.chemical }}</td>
-                                <td class="p-3">{{ record.quantity }}</td>
-                                <td class="p-3">{{ record.notes }}</td>
+                            <tr  class="border-b">
+                                <td class="p-3"></td>
+                                <td class="p-3"></td>
+                                <td class="p-3"></td>
+                                <td class="p-3"></td>
                             </tr>
-                            <tr v-if="project.sprayingTable.length === 0">
+                            <tr>
                                 <td colspan="4" class="p-3 text-center text-gray-500">No spraying records yet.</td>
                             </tr>
                         </tbody>
@@ -60,13 +60,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(record, index) in project.fertilizerTable" :key="index" class="border-b">
-                                <td class="p-3">{{ record.date }}</td>
-                                <td class="p-3">{{ record.type }}</td>
-                                <td class="p-3">{{ record.quantity }}</td>
-                                <td class="p-3">{{ record.notes }}</td>
+                            <tr class="border-b">
+                                <td class="p-3"></td>
+                                <td class="p-3"></td>
+                                <td class="p-3"></td>
+                                <td class="p-3"></td>
                             </tr>
-                            <tr v-if="project.fertilizerTable.length === 0">
+                            <tr>
                                 <td colspan="4" class="p-3 text-center text-gray-500">No fertilizer records yet.</td>
                             </tr>
                         </tbody>
@@ -101,20 +101,10 @@ const project = ref({
 });
 
 const addSprayingRecord = () => {
-    project.value.sprayingTable.push({
-        date: new Date().toISOString().split('T')[0],
-        chemical: '',
-        quantity: '',
-        notes: '',
-    });
+ 
 };
 
 const addFertilizerRecord = () => {
-    project.value.fertilizerTable.push({
-        date: new Date().toISOString().split('T')[0],
-        type: '',
-        quantity: '',
-        notes: '',
-    });
+  
 };
 </script>
