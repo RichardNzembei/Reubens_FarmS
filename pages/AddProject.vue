@@ -12,7 +12,7 @@
                 <form @submit.prevent="submitProject">
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Project Name</label>
-                        <input v-model="project.name" type="text"
+                        <input v-model="project.projectName" type="text"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                             placeholder="Enter project name" required />
                     </div>
@@ -50,28 +50,33 @@
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useProjectStore } from "~/stores/project";
 
 const router = useRouter();
+const projectStore = useProjectStore();
 
-const project = ref({
-    name: '',
-    description: '',
-    duration: '',
-    startDate: '',
-    landSize: '',
+const project = reactive({
+  projectName: "",
+  description: "",
+  duration: "",
+  startDate: "",
+  landSize: ""
 });
 
-const submitProject = () => {
-    const savedProject = {
-        ...project.value,
-        id: Date.now(),
-    };
-    console.log('Saved Project:', savedProject);
-    router.push({ path: `/projects/${savedProject.id}` });
+const submitProject = async () => {
+  try {
+    console.log("Submitting project:", project);  // Log the project data
+    const projectId = await projectStore.addProject(project);
+  } catch (error) {
+    alert("Failed to save project");
+  }
 };
+
 </script>
+
+
 <style>
 @keyframes fade-in {
     from {
