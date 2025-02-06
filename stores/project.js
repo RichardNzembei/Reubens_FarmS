@@ -6,8 +6,12 @@ export const useProjectStore = defineStore("projects", {
   }),
   actions: {
     async addProject(project) {
+      const baseURL = process.env.NODE_ENV === 'production'
+        ? 'https://reubens-farm-s.vercel.app'
+        : 'http://localhost:3000';
+
       try {
-        const response = await fetch(`http://localhost:3000/api/projects`, {
+        const response = await fetch(`${baseURL}/api/projects`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(project)
@@ -25,7 +29,6 @@ export const useProjectStore = defineStore("projects", {
         alert("Error adding project: " + error.message); // Alert with the specific error message
         throw error;
       }
-      
     }
   }
 });
