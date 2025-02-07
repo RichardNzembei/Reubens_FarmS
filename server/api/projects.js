@@ -1,37 +1,58 @@
 import getFirebaseAdmin from "../firebase";
 
 export default defineEventHandler(async (event) => {
+  // Set CORS headers
+  setResponseHeaders(event, {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  });
+
+  // Handle CORS preflight requests
+  if (event.node.req.method === "OPTIONS") {
+    return { message: "CORS preflight passed" };
+  }
+
   try {
     const firestore = getFirebaseAdmin();
-    const body = await readBody(event);
-
-    console.log("Received body:", body);
-
-    if (!body.projectName || !body.description || !body.duration || !body.startDate || !body.landSize) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Fill all project details"
-      });
+    if (!firestore) {
+      throw createError({ statusCode: 500, statusMessage: "Failed to initialize Firestore" });
     }
 
-    const docRef = await firestore.collection("projects").add({
-      projectName: body.projectName,
-      description: body.description,
-      duration: body.duration,
-      startDate: body.startDate,
-      landSize: body.landSize,
-      createdAt: new Date()
-    });
+    if (event.node.req.method === "GET") {
+      // Fetch all projects from Firestore
+      const snapshot = await firestore.collection("projects").orderBy("createdAt", "desc").get();
+      const projects = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-    return {
-      message: "Project added successfully",
-      id: docRef.id
-    };
+      return projects;
+    }
+
+    if (event.node.req.method === "POST") {
+      const body = await readBody(event);
+      console.log("Received body:", body);
+
+      if (!body.projectName || !body.description || !body.duration || !body.startDate || !body.landSize) {
+        throw createError({ statusCode: 400, statusMessage: "Fill all project details" });
+      }
+
+      const docRef = await firestore.collection("projects").add({
+        projectName: body.projectName,
+        description: body.description,
+        duration: body.duration,
+        startDate: body.startDate,
+        landSize: body.landSize,
+        createdAt: new Date(),
+      });
+
+      return { message: "Project added successfully", id: docRef.id };
+    }
+
+    throw createError({ statusCode: 405, statusMessage: "Method Not Allowed" });
   } catch (error) {
-    console.error("Error adding project:", error);  // Log the error
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Internal Server Error"
-    });
+    console.error("Error handling project request:", error);
+    throw createError({ statusCode: 500, statusMessage: "Internal Server Error" });
   }
 });
