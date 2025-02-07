@@ -1,7 +1,7 @@
 <template>
     <div class="bg-gray-100 min-h-screen p-6">
         <!-- Back Button -->
-        <NuxtLink to="/" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-all duration-300">
+        <NuxtLink to="/existingproject" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-all duration-300">
             <UIcon name="i-heroicons-arrow-left" class="w-6 h-6 mr-2 hover:-translate-x-1 transition-transform" />
             <span class="text-sm font-medium">Back</span>
         </NuxtLink>
