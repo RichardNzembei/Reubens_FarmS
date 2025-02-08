@@ -40,42 +40,60 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                             placeholder="Enter land size" required />
                     </div>
-                    <button type="submit"
-                        class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all">
-                        Save Project
+                    <button type="submit" :disabled="loading"
+                        class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span v-if="loading">Saving...</span>
+                        <span v-else>Save Project</span>
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </template>
-<script setup>
-import { reactive } from "vue";
+
+<script setup lang="ts">
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useProjectStore } from "~/stores/project";
 
 const router = useRouter();
 const projectStore = useProjectStore();
 
+// Reactive project object for two-way binding with the form
 const project = reactive({
-  projectName: "",
-  description: "",
-  duration: "",
-  startDate: "",
-  landSize: ""
+    projectName: "",
+    description: "",
+    duration: "",
+    startDate: "",
+    landSize: ""
 });
 
+// Loading state to avoid double submission
+const loading = ref(false);
+
 const submitProject = async () => {
-  try {
-    console.log("Submitting project:", project);  // Log the project data
-    const projectId = await projectStore.addProject(project);
-  } catch (error) {
-    alert("Failed to save project");
-  }
+    if (loading.value) return; // Prevent double submission
+    loading.value = true;
+    try {
+        console.log("Submitting project:", project); // Log the project data
+        // Assuming addProject returns a promise
+        await projectStore.addProject(project);
+
+        // Clear form after successful submission
+        project.projectName = "";
+        project.description = "";
+        project.duration = "";
+        project.startDate = "";
+        project.landSize = "";
+
+        // Optionally, navigate to another route or show a success message here.
+    } catch (error) {
+        alert("Failed to save project");
+    } finally {
+        loading.value = false;
+    }
 };
-
 </script>
-
 
 <style>
 @keyframes fade-in {

@@ -1,11 +1,13 @@
 <script setup>
 import { useProjectStore } from "~/stores/project";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 const projectStore = useProjectStore();
+const loading = ref(true);
 
-onMounted(() => {
-  projectStore.fetchProjects(); // Fetch projects when the component loads
+onMounted(async () => {
+  await projectStore.fetchProjects();
+  loading.value = false;
 });
 </script>
 
@@ -20,19 +22,23 @@ onMounted(() => {
 
     <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Projects</h1>
 
+    <!-- Loading Spinner -->
+    <div v-if="loading" class="flex justify-center items-center min-h-[200px]">
+      <div class="w-16 h-16 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+    </div>
+
     <!-- No Projects Available -->
-    <div v-if="projectStore.projects.length === 0" class="text-gray-500 text-center">No projects available.</div>
+    <div v-else-if="projectStore.projects.length === 0" class="text-gray-500 text-center">
+      No projects available.
+    </div>
 
     <!-- Project Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div 
-        v-for="project in projectStore.projects" 
-        :key="project.id"
-        class="bg-white shadow-lg rounded-xl p-5 border transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
-      >
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-for="project in projectStore.projects" :key="project.id"
+        class="bg-white shadow-lg rounded-xl p-5 border transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
         <h2 class="text-xl font-semibold text-gray-900">{{ project.projectName }}</h2>
         <p class="text-gray-600 mt-2">{{ project.description }}</p>
-        
+
         <div class="mt-4 text-sm text-gray-500">
           <span>⏳ Duration: {{ project.duration }}</span> |
           <span>📅 Start Date: {{ project.startDate }}</span>
@@ -45,10 +51,8 @@ onMounted(() => {
         </div>
 
         <!-- View Project Button -->
-        <NuxtLink 
-          :to="`/projects/${project.id}`" 
-          class="mt-4 inline-block px-4 py-2 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300"
-        >
+        <NuxtLink :to="`/projects/${project.id}`"
+          class="mt-4 inline-block px-4 py-2 bg-blue-400 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300">
           View
         </NuxtLink>
       </div>
