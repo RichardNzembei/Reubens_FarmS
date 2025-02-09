@@ -24,33 +24,50 @@
                     <h3 class="text-xl font-semibold text-gray-700 mb-4">Spraying Records</h3>
                     <form @submit.prevent="saveSprayingRecord">
                         <input v-model="newSpraying.date" type="date" required class="border p-2 mr-2" />
-                        <input v-model="newSpraying.chemical" placeholder="Chemical Used" required
+                        <input v-model="newSpraying.serialNo" placeholder="Serial No" required
                             class="border p-2 mr-2" />
-                        <input v-model="newSpraying.quantity" placeholder="Quantity" required class="border p-2 mr-2" />
-                        <input v-model="newSpraying.notes" placeholder="Notes" class="border p-2" />
+                        <input v-model="newSpraying.tradeName" placeholder="Trade Name" required
+                            class="border p-2 mr-2" />
+                        <input v-model="newSpraying.regNo" placeholder="Registration No" class="border p-2 mr-2" />
+                        <input v-model="newSpraying.activeIngredients" placeholder="Active ingredients" required
+                            class="border p-2 mr-2" />
+                        <input v-model="newSpraying.manufacturer" placeholder="Manufacturer" required
+                            class="border p-2 mr-2" />
+                        <input v-model="newSpraying.agent" placeholder="Agent" required class="border p-2 mr-2" />
+                        <input v-model="newSpraying.uses" placeholder="Uses" required class="border p-2 mr-2" />
                         <button type="submit"
                             class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-all ml-2">
                             Save
                         </button>
                     </form>
-                    <table class="w-full mt-4 border-collapse">
+                    <table class="min-w-full border border-collapse border-gray-300">
                         <thead>
-                            <tr class="bg-gray-200">
+                            <tr class="bg-gray-100 border border-gray-300">
+                                <th class="p-3 text-left">Serial No</th>
+                                <th class="p-3 text-left">Trade Name</th>
+                                <th class="p-3 text-left">Reg No</th>
+                                <th class="p-3 text-left">Active Ingredients</th>
+                                <th class="p-3 text-left">Manufacturer</th>
+                                <th class="p-3 text-left">Agent</th>
+                                <th class="p-3 text-left">Uses</th>
                                 <th class="p-3 text-left">Date</th>
-                                <th class="p-3 text-left">Chemical Used</th>
-                                <th class="p-3 text-left">Quantity</th>
-                                <th class="p-3 text-left">Notes</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="record in project.sprayingTable" :key="record.id" class="border-b">
-                                <td class="p-3">{{ record.date }}</td>
-                                <td class="p-3">{{ record.chemical }}</td>
-                                <td class="p-3">{{ record.quantity }}</td>
-                                <td class="p-3">{{ record.notes }}</td>
+                            <tr v-for="record in project.sprayingTable" :key="record.id"
+                                class="border border-gray-300 hover:bg-gray-50">
+                                <td class="p-3 border">{{ record.serialNo }}</td>
+                                <td class="p-3 border">{{ record.tradeName }}</td>
+                                <td class="p-3 border">{{ record.regNo }}</td>
+                                <td class="p-3 border">{{ record.activeIngredients }}</td>
+                                <td class="p-3 border">{{ record.manufacturer }}</td>
+                                <td class="p-3 border">{{ record.agent }}</td>
+                                <td class="p-3 border">{{ record.uses }}</td>
+                                <td class="p-3 border">{{ record.date }}</td>
                             </tr>
                         </tbody>
                     </table>
+
                 </div>
 
                 <!-- Fertilizer Records -->
@@ -109,7 +126,7 @@ const route = useRoute();
 const projectStore = useProjectStore();
 const project = ref(null);
 const loading = ref(true);
-const newSpraying = ref({ date: '', chemical: '', quantity: '', notes: '' });
+const newSpraying = ref({ serialNo: '', tradeName: '', regNo: '', activeIngredients: '', manufacturer: '', agent: '', uses: '', date: '' });
 const newFertilizer = ref({ date: '', type: '', quantity: '', notes: '' });
 
 onMounted(async () => {
@@ -122,7 +139,7 @@ onMounted(async () => {
 const saveSprayingRecord = async () => {
     try {
         await projectStore.addSprayingRecord(project.value.id, newSpraying.value);
-        newSpraying.value = { date: '', chemical: '', quantity: '', notes: '' };
+        newSpraying.value = { serialNo: '', tradeName: '', regNo: '', activeIngredients: '', manufacturer: '', agent: '', uses: '', date: '' };
     } catch (error) {
         console.error("Error saving spraying record:", error);
     }
@@ -141,20 +158,27 @@ const generateReport = () => {
     const sprayingSheetData = [
         ["Date", "Chemical Used", "Quantity", "Notes"],
         ...project.value.sprayingTable.map(record => [
-            record.date,
-            record.chemical,
-            record.quantity,
-            record.notes
+            record.serialNo,
+            record.tradeName,
+            record.regNo,
+            record.activeIngredients,
+            record.manufacturer,
+            record.agent,
+            record.uses,
+            record.date
+
+
         ])
     ];
 
     const fertilizerSheetData = [
-        ["Date", "Fertilizer Type", "Quantity", "Notes"],
+        ["Serial No", "Trade Name", "Registration No", "Active Ingredients", "Manufacturer", "Agent", "Date"],
         ...project.value.fertilizerTable.map(record => [
             record.date,
-            record.type,
+            record.chemical,
             record.quantity,
             record.notes
+
         ])
     ];
     const wb = XLSX.utils.book_new();

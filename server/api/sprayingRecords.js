@@ -23,36 +23,44 @@ export default defineEventHandler(async (event) => {
 
     if (event.node.req.method === "POST") {
       const body = await readBody(event);
+      
       if (!body.projectId) {
         throw createError({
           statusCode: 400,
           statusMessage: "Missing projectId",
         });
       }
-      if (!body.date || !body.chemical || !body.quantity) {
+      if (!body.serialNo || !body.tradeName || !body.regNo || !body.date) {
         throw createError({
           statusCode: 400,
           statusMessage: "Missing required fields for spraying record",
         });
       }
+
       const newRecord = {
         id: Date.now(),
+        serialNo: body.serialNo,
+        tradeName: body.tradeName,
+        regNo: body.regNo,
+        activeIngredients: body.activeIngredients || "",
+        manufacturer: body.manufacturer || "",
+        agent: body.agent || "",
+        uses: body.uses || "",
         date: body.date,
-        chemical: body.chemical,
-        quantity: body.quantity,
-        notes: body.notes || "",
         createdAt: new Date(),
       };
 
       console.log("New spraying record:", newRecord);
       const projectRef = firestore.collection("projects").doc(body.projectId);
       const projectSnap = await projectRef.get();
+      
       if (!projectSnap.exists) {
         throw createError({
           statusCode: 404,
           statusMessage: "Project not found",
         });
       }
+
       await projectRef.update({
         sprayingTable: FieldValue.arrayUnion(newRecord),
       });
