@@ -40,13 +40,13 @@ onMounted(async () => {
         <p class="text-gray-600 mt-2">{{ project.description }}</p>
 
         <div class="mt-4 text-sm text-gray-500">
-          <span>⏳ Duration: {{ project.duration }}</span> |
+          <span>⏳ Duration: {{ project.duration }} months</span> |
           <span>📅 Start Date: {{ project.startDate }}</span>
         </div>
 
         <div class="mt-2">
           <span class="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-600 rounded-lg">
-            🌿 Land Size: {{ project.landSize }}
+            🌿 Land Size: {{ project.landSize }} Acres
           </span>
         </div>
 
